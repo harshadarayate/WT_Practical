@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Drawing Tool</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            padding: 10px;
+            background: #333;
+            color: white;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            flex-wrap: wrap;
+        }
+
+        canvas {
+            background-color: white;
+            cursor: crosshair;
+            margin-top: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 95%;
+            max-height: 80vh;
+            touch-action: none;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background: #555;
+            color: white;
+        }
+
+        button.active {
+            background: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <button id="btnFree" class="active" onclick="setShape('free')">Free Hand</button>
+        <button id="btnLine" onclick="setShape('line')">Line</button>
+        <button id="btnRect" onclick="setShape('rect')">Rectangle</button>
+        <button onclick="clearCanvas()" style="background: #dc3545;">Clear</button>
+    </div>
+
+    <canvas id="drawingCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let startX, startY;
+        let currentShape = 'free';
+        let snapshot;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth * 0.9;
+            canvas.height = window.innerHeight * 0.75;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function setShape(shape) {
+            currentShape = shape;
+            document.getElementById('btnFree').classList.toggle('active', shape === 'free');
+            document.getElementById('btnLine').classList.toggle('active', shape === 'line');
+            document.getElementById('btnRect').classList.toggle('active', shape === 'rect');
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            
+            // Save state for shapes that need redrawing (line/rect)
+            snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!drawing) return;
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#333';
+
+            if (currentShape === 'free') {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            } else {
+                // Restore state to clear previous "ghost" shapes while dragging
+                ctx.putImageData(snapshot, 0, 0);
+                ctx.beginPath();
+                if (currentShape === 'line') {
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(e.offsetX, e.offsetY);
+                } else if (currentShape === 'rect') {
+                    ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
+                }
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            drawing = false;
+        });
+    </script>
+</body>
+</html>

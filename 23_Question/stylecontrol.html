@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Switcher</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; transition: all 0.3s ease; text-align: center; }
+        .controls { margin-bottom: 20px; }
+        .content-area { margin-top: 50px; }
+        input, select, button { margin: 5px; padding: 10px; }
+        
+        /* Style 1: Corporate Blue */
+        body.theme-blue { background-color: #f0f4f8; color: #243b53; }
+        body.theme-blue input, body.theme-blue select, body.theme-blue button { 
+            border: 2px solid #334e68; border-radius: 4px; background: white; 
+        }
+
+        /* Style 2: Dark Mode */
+        body.theme-dark { background-color: #121212; color: #e0e0e0; }
+        body.theme-dark input, body.theme-dark select, body.theme-dark button { 
+            border: 1px solid #333; background: #1e1e1e; color: #bb86fc; 
+        }
+
+        /* Style 3: Forest Green */
+        body.theme-green { background-color: #e8f5e9; color: #1b5e20; }
+        body.theme-green input, body.theme-green select, body.theme-green button { 
+            border: 1px dashed #2e7d32; background: #fff; border-radius: 15px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button id="btn-blue">Corporate Blue</button>
+        <button id="btn-dark">Dark Mode</button>
+        <button id="btn-green">Forest Green</button>
+    </div>
+
+    <hr>
+
+    <div class="content-area">
+        <h1 id="status-text">Select a theme above</h1>
+        <p>This page uses jQuery to dynamically swap CSS classes on the body tag, 
+        instantly updating the visual style of all elements.</p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#btn-blue').click(function() {
+                $('body').removeClass().addClass('theme-blue');
+                $('#status-text').text("Corporate Blue Theme Applied");
+            });
+
+            $('#btn-dark').click(function() {
+                $('body').removeClass().addClass('theme-dark');
+                $('#status-text').text("Dark Mode Theme Applied");
+            });
+
+            $('#btn-green').click(function() {
+                $('body').removeClass().addClass('theme-green');
+                $('#status-text').text("Forest Green Theme Applied");
+            });
+        });
+    </script>
+</body>
+</html>

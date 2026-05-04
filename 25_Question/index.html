@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Traffic Signal</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --housing-color: #333;
+            --red-off: #440000;
+            --red-on: #ff0000;
+            --yellow-off: #444400;
+            --yellow-on: #ffff00;
+            --green-off: #004400;
+            --green-on: #00ff00;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+            font-family: sans-serif;
+        }
+
+        .traffic-light {
+            background-color: var(--housing-color);
+            width: 120px;
+            padding: 20px;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .light {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #111;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* LED Glowing Effects */
+        .red { background-color: var(--red-off); }
+        .red.active { 
+            background-color: var(--red-on); 
+            box-shadow: 0 0 40px var(--red-on), inset 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .yellow { background-color: var(--yellow-off); }
+        .yellow.active { 
+            background-color: var(--yellow-on); 
+            box-shadow: 0 0 40px var(--yellow-on), inset 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .green { background-color: var(--green-off); }
+        .green.active { 
+            background-color: var(--green-on); 
+            box-shadow: 0 0 40px var(--green-on), inset 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 480px) {
+            .traffic-light {
+                width: 80px;
+                padding: 15px;
+            }
+            .light {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="traffic-light">
+        <div id="red" class="light red active"></div>
+        <div id="yellow" class="light yellow"></div>
+        <div id="green" class="light green"></div>
+    </div>
+
+    <script>
+        const lights = {
+            red: document.getElementById('red'),
+            yellow: document.getElementById('yellow'),
+            green: document.getElementById('green')
+        };
+
+        let state = 0;
+
+        function updateLights() {
+            // Reset all
+            Object.values(lights).forEach(l => l.classList.remove('active'));
+
+            if (state === 0) { // Red
+                lights.red.classList.add('active');
+                setTimeout(() => { state = 1; updateLights(); }, 3000);
+            } else if (state === 1) { // Green
+                lights.green.classList.add('active');
+                setTimeout(() => { state = 2; updateLights(); }, 3000);
+            } else if (state === 2) { // Yellow
+                lights.yellow.classList.add('active');
+                setTimeout(() => { state = 0; updateLights(); }, 1000);
+            }
+        }
+
+        updateLights();
+    </script>
+</body>
+</html>
